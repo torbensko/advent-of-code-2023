@@ -1,0 +1,37 @@
+# Ignore compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore dependencies
+/node_modules
+/bower_components
+
+# Ignore build artifacts
+/build
+/dist
+
+# Ignore IDE and editor files
+/.vscode
+/.idea
+*.sublime-project
+*.sublime-workspace
+
+# Ignore logs and temporary files
+/logs
+/tmp
+
+# Ignore sensitive information
+/.env
+/.env.*
+*.pem
+*.key
+*.cer
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+.*
+!.gitignore

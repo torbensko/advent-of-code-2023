@@ -1,0 +1,13 @@
+{
+  "name": "01",
+  "packageManager": "yarn@3.5.0",
+  "dependencies": {
+    "tsc": "^2.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.1"
+  },
+  "scripts": {
+    "01": "bun ./01/index.ts"
+  }
+}
