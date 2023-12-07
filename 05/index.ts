@@ -84,6 +84,9 @@ const seedPairs = data
   .split(" ")
   .map(Number);
 
+const start = new Date().getTime();
+console.log(start);
+
 let lowestLocation = Infinity;
 for (let i = 0; i < seedPairs.length; i += 2) {
   console.log(`${Math.round((i / seedPairs.length) * 100)}%`);
@@ -92,3 +95,4 @@ for (let i = 0; i < seedPairs.length; i += 2) {
   }
 }
 console.log(lowestLocation);
+console.log(new Date().getTime() - start);
