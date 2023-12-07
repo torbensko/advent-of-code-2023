@@ -9,10 +9,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "01@workspace:."
   dependencies:
+    "@types/lodash": ^4.14.202
     "@types/node": ^20.10.1
+    lodash: ^4.17.21
     tsc: ^2.0.4
   languageName: unknown
   linkType: soft
+
+"@types/lodash@npm:^4.14.202":
+  version: 4.14.202
+  resolution: "@types/lodash@npm:4.14.202"
+  checksum: a91acf3564a568c6f199912f3eb2c76c99c5a0d7e219394294213b3f2d54f672619f0fde4da22b29dc5d4c31457cd799acc2e5cb6bd90f9af04a1578483b6ff7
+  languageName: node
+  linkType: hard
 
 "@types/node@npm:^20.10.1":
   version: 20.10.1
@@ -20,6 +29,13 @@ __metadata:
   dependencies:
     undici-types: ~5.26.4
   checksum: 9dfdcd2496ce535dba0ae496985d6e991a8a5d70a180db3a94c947a2123d99318a95dce4aa2a192f7e57c3afa3fdb44d6fd63e18efd49568950d6c239dadcc39
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
   languageName: node
   linkType: hard
 

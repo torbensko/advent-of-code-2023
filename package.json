@@ -2,6 +2,8 @@
   "name": "01",
   "packageManager": "yarn@3.5.0",
   "dependencies": {
+    "@types/lodash": "^4.14.202",
+    "lodash": "^4.17.21",
     "tsc": "^2.0.4"
   },
   "devDependencies": {
