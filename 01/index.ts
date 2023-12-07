@@ -58,3 +58,7 @@ const numbers = lines.map((line: string) => {
 });
 
 console.log(sumArray(numbers));
+
+// 25ksx49lrcroneightz 21 WRONG
+// 8xplcnjxfthreeeightthree
+// 5threenine 53
