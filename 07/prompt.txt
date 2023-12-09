@@ -1,0 +1,16 @@
+in typescript, parse the following:
+
+32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483
+
+into 
+
+[{
+  cards: ["3","2","T","3","K"]
+  bid: 765
+}]
+
+the type should be Hand[]
