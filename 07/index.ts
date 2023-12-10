@@ -8,7 +8,7 @@ const args = process.argv;
 const MODE_DEBUG = args.includes("-test");
 
 const input = fs.readFileSync(
-  `${__dirname}/${MODE_DEBUG ? "test.txt" : "input.txt"}`,
+  `${__dirname}/${MODE_DEBUG ? "test2.txt" : "input.txt"}`,
   "utf8"
 );
 
@@ -43,7 +43,7 @@ const cardScores = {
   T: 10,
   Q: 11,
   K: 12,
-  A: 13,
+  A: 13
 };
 
 const TYPE_SCORES_TIERS = Math.pow(13, 5) * 13;
@@ -52,6 +52,7 @@ type Hand = {
   cards: string[];
   scores: number[];
   bid: number;
+  jackCount: number;
   fiveOfAKind?: number;
   fourOfAKind?: number;
   threeOfAKind?: number;
@@ -82,29 +83,69 @@ function parseHands(input: string): Hand[] {
       threeOfAKind: 0,
       twoOfAKind: 0,
       typeScore: 0,
+      jackCount: scores.filter((s) => s === cardScores.J).length,
       type: 0,
-      power: 0,
+      power: 0
     };
 
     const grouped = groupBy(scores);
+    let availableJacks = hand.jackCount;
 
-    Object.values(grouped).forEach((group, key) => {
-      if (group.length === 5) {
-        hand.fiveOfAKind++;
-      } else if (group.length === 4) {
-        hand.fourOfAKind++;
-      } else if (group.length === 3) {
-        hand.threeOfAKind++;
-      } else if (group.length === 2) {
-        hand.twoOfAKind++;
-      }
-    });
+    const orderedGroups = orderBy(
+      Object.values(grouped),
+      "length",
+      "desc"
+    ).filter((grp) => grp[0] !== cardScores.J);
+
+    if (orderedGroups.length === 0) {
+      // edge case when all cards are jokers
+      hand.fiveOfAKind++;
+    } else {
+      orderedGroups.forEach((group, key) => {
+        if (
+          group.length === 5 ||
+          (group.length === 4 && availableJacks >= 1) ||
+          (group.length === 3 && availableJacks >= 2) ||
+          (group.length === 2 && availableJacks >= 3) ||
+          (group.length === 1 && availableJacks >= 4) ||
+          availableJacks >= 5
+        ) {
+          hand.fiveOfAKind++;
+          availableJacks -= 5 - group.length;
+        } else if (
+          group.length === 4 ||
+          (group.length === 3 && availableJacks >= 1) ||
+          (group.length === 2 && availableJacks >= 2) ||
+          (group.length === 1 && availableJacks >= 3) ||
+          availableJacks >= 4
+        ) {
+          hand.fourOfAKind++;
+          availableJacks -= 4 - group.length;
+        } else if (
+          group.length === 3 ||
+          (group.length === 2 && availableJacks >= 1) ||
+          (group.length === 1 && availableJacks >= 2) ||
+          availableJacks >= 3
+        ) {
+          hand.threeOfAKind++;
+          availableJacks -= 3 - group.length;
+        } else if (
+          group.length === 2 ||
+          (group.length === 1 && availableJacks >= 1) ||
+          availableJacks >= 2
+        ) {
+          hand.twoOfAKind++;
+          availableJacks -= 2 - group.length;
+        }
+      });
+    }
 
     if (hand.fiveOfAKind === 1) {
       hand.type = 7;
     } else if (hand.fourOfAKind === 1) {
       hand.type = 6;
     } else if (hand.threeOfAKind === 1 && hand.twoOfAKind === 1) {
+      // full house
       hand.type = 5;
     } else if (hand.threeOfAKind === 1) {
       hand.type = 4;
@@ -116,6 +157,8 @@ function parseHands(input: string): Hand[] {
       // high card
       hand.type = 1;
     }
+
+    console.log(line, hand.jackCount, hand.type, orderedGroups);
 
     hand.typeScore = scores.reduce((acc, score, i) => {
       // earlier cards are more important
@@ -135,6 +178,8 @@ function parseHands(input: string): Hand[] {
 
 const hands: Hand[] = parseHands(input);
 const rankedCards = orderBy(hands, "power", "desc");
+
+console.log(rankedCards);
 
 const winnings = rankedCards.reduce((acc, hand, i) => {
   const rank = rankedCards.length - i;
