@@ -9,7 +9,7 @@ const args = process.argv;
 const MODE_DEBUG = args.includes("-test");
 
 const input = fs.readFileSync(
-  `${__dirname}/${MODE_DEBUG ? "test2.txt" : "input.txt"}`,
+  `${__dirname}/${MODE_DEBUG ? "test.txt" : "input.txt"}`,
   "utf8"
 );
 
@@ -30,7 +30,8 @@ const pipes = {
   DownLeft: "J",
   LeftUp: "L",
   UpRight: "F",
-  Nothing: "."
+  Nothing: ".",
+  Start: "S"
 };
 
 const directionStr = (direction: Direction) => {
@@ -54,12 +55,17 @@ class Walker {
     public x: number,
     public y: number,
     public direction: Direction,
-    public score = 1
+    public score = 0
   ) {}
 
-  move() {
+  isValid() {
+    // hit a square that has previously been visited
+    if (distance[this.y][this.x] !== 0) {
+      this.isFinished = true;
+      return;
+    }
+
     const pipe = land[this.y][this.x];
-    this.score++;
 
     switch (pipe) {
       case pipes.Nothing:
@@ -67,14 +73,8 @@ class Walker {
         break;
       case pipes.Vertical:
         switch (this.direction) {
-          case Direction.Up:
-            this.y--;
-            break;
           case Direction.Right:
             this.isFinished = true;
-            break;
-          case Direction.Down:
-            this.y++;
             break;
           case Direction.Left:
             this.isFinished = true;
@@ -86,11 +86,90 @@ class Walker {
           case Direction.Up:
             this.isFinished = true;
             break;
+          case Direction.Down:
+            this.isFinished = true;
+            break;
+        }
+        break;
+      case pipes.RightDown: // UpLeft
+        switch (this.direction) {
+          case Direction.Down:
+            this.isFinished = true;
+            break;
+          case Direction.Left:
+            this.isFinished = true;
+            break;
+        }
+        break;
+      case pipes.DownLeft: // RightUp
+        switch (this.direction) {
+          case Direction.Up:
+            this.isFinished = true;
+            break;
+          case Direction.Left:
+            this.isFinished = true;
+            break;
+        }
+        break;
+      case pipes.LeftUp: // DownRight
+        switch (this.direction) {
+          case Direction.Up:
+            this.isFinished = true;
+            break;
           case Direction.Right:
-            this.x++;
+            this.isFinished = true;
+            break;
+        }
+        break;
+      case pipes.UpRight: // LeftDown
+        switch (this.direction) {
+          case Direction.Right:
+            this.isFinished = true;
             break;
           case Direction.Down:
             this.isFinished = true;
+            break;
+        }
+        break;
+    }
+    return !this.isFinished;
+  }
+
+  move() {
+    const pipe = land[this.y][this.x];
+    this.score++;
+
+    switch (pipe) {
+      case pipes.Start:
+        switch (this.direction) {
+          case Direction.Up:
+            this.y--;
+            break;
+          case Direction.Down:
+            this.y++;
+            break;
+          case Direction.Right:
+            this.x++;
+            break;
+          case Direction.Left:
+            this.x--;
+            break;
+        }
+        break;
+      case pipes.Vertical:
+        switch (this.direction) {
+          case Direction.Up:
+            this.y--;
+            break;
+          case Direction.Down:
+            this.y++;
+            break;
+        }
+        break;
+      case pipes.Horizontal:
+        switch (this.direction) {
+          case Direction.Right:
+            this.x++;
             break;
           case Direction.Left:
             this.x--;
@@ -107,19 +186,10 @@ class Walker {
             this.y++;
             this.direction = Direction.Down;
             break;
-          case Direction.Down:
-            this.isFinished = true;
-            break;
-          case Direction.Left:
-            this.isFinished = true;
-            break;
         }
         break;
       case pipes.DownLeft: // RightUp
         switch (this.direction) {
-          case Direction.Up:
-            this.isFinished = true;
-            break;
           case Direction.Right:
             this.y--;
             this.direction = Direction.Up;
@@ -128,19 +198,10 @@ class Walker {
             this.x--;
             this.direction = Direction.Left;
             break;
-          case Direction.Left:
-            this.isFinished = true;
-            break;
         }
         break;
       case pipes.LeftUp: // DownRight
         switch (this.direction) {
-          case Direction.Up:
-            this.isFinished = true;
-            break;
-          case Direction.Right:
-            this.isFinished = true;
-            break;
           case Direction.Down:
             this.x++;
             this.direction = Direction.Right;
@@ -157,12 +218,6 @@ class Walker {
             this.x++;
             this.direction = Direction.Right;
             break;
-          case Direction.Right:
-            this.isFinished = true;
-            break;
-          case Direction.Down:
-            this.isFinished = true;
-            break;
           case Direction.Left:
             this.y++;
             this.direction = Direction.Down;
@@ -171,10 +226,7 @@ class Walker {
         break;
     }
 
-    if (distance[this.y][this.x] !== 0) {
-      // hit a square that has previously been visited
-      this.isFinished = true;
-    } else {
+    if (this.isValid()) {
       distance[this.y][this.x] = this.score;
     }
   }
